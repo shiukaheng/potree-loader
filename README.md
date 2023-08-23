@@ -48,3 +48,8 @@ function update() {
   renderer.render(scene, camera);
 }
 ```
+
+# Todo
+- [ ] Types!
+- [ ] Async / await
+- [ ] Occlusion culling
