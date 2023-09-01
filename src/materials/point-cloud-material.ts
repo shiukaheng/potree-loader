@@ -3,6 +3,8 @@ import {
   BufferGeometry,
   Camera,
   Color,
+  GLSL3,
+  GLSLVersion,
   LessEqualDepth,
   Material,
   NearestFilter,
@@ -173,6 +175,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this._classification,
   );
 
+  glslVersion = GLSL3;
+
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
     bbSize: makeUniform('fv', [0, 0, 0] as [number, number, number]),
     blendDepthSupplement: makeUniform('f', 0.0),
@@ -222,6 +226,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     highlightedPointColor: makeUniform('fv', DEFAULT_HIGHLIGHT_COLOR.clone()),
     enablePointHighlighting: makeUniform('b', true),
     highlightedPointScale: makeUniform('f', 2.0),
+    time: makeUniform('f', 0),
   };
 
   @uniform('bbSize') bbSize!: [number, number, number];
@@ -559,11 +564,14 @@ export class PointCloudMaterial extends RawShaderMaterial {
       materialUniforms.pcIndex.value =
         pcIndex !== undefined ? pcIndex : octree.visibleNodes.indexOf(node);
 
+      materialUniforms.time.value = performance.now() / 1000;
+
       // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
       // set to true to instruct ThreeJS to upload them. See also
       // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
 
       // Remove the cast to any after updating to Three.JS >= r113
+
       (material as any) /*ShaderMaterial*/.uniformsNeedUpdate = true;
     };
   }

@@ -1,6 +1,7 @@
 import { Vector3 } from 'three';
 import { PointCloudOctree } from '../src';
 import { Viewer } from './viewer';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 
 import "./main.css"
 import { PointCloudMaterial } from '../src/materials';

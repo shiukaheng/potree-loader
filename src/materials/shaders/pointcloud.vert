@@ -1,5 +1,3 @@
-#version 300 es
-
 precision highp float;
 precision highp int;
 
@@ -32,6 +30,7 @@ uniform vec3 bbSize; // bounding box size?
 uniform vec3 uColor;
 uniform float opacity;
 uniform float level;
+uniform float time;
 
 uniform float filterByNormalThreshold;
 uniform float opacityAttenuation;
@@ -64,6 +63,7 @@ out float vOpacity;
 #include lod.vert;
 #include getRGB.vert;
 #include colorConversion.vert;
+#include snoise.vert;
 
 
 void main() {
@@ -76,7 +76,11 @@ void main() {
 
 	*/
 	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-	gl_Position = projectionMatrix * mvPosition;
+	float distortFactor = snoise(vec4(mvPosition.x, mvPosition.y, mvPosition.z, time));
+	vec4 up = vec4(0, 1, 0, 0);
+	vec4 warpedPosition = mvPosition + up * distortFactor;
+
+	gl_Position = projectionMatrix * warpedPosition;
 	#if defined(paraboloid_point_shape)
 		vViewPosition = mvPosition.xyz;
 	#endif
